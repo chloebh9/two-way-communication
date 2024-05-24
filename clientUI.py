@@ -11,7 +11,7 @@ class ChatClient:
     def __init__(self, master):
         self.master = master
         self.master.title("Chat Client")
-        self.master.geometry("700x400")  # 李쏀겕湲� 議곗젅.
+        self.master.geometry("700x400")
         self.username = None
         self.client_port = None
         self.server_ip = 'localhost'
@@ -66,7 +66,7 @@ class ChatClient:
         if online_users_list is not None:
             self.login_frame.pack_forget()
             self.chat_frame.pack()
-            self.master.geometry("600x480")  # 濡쒓렇�� �� 李� �ш린 議곗젙
+            self.master.geometry("600x480")
             threading.Thread(target=handle_incoming_messages, args=(self.client_port, self)).start()
             self.update_online_users(online_users_list)
         else:
