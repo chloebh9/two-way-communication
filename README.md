@@ -1,6 +1,3 @@
-# two-way-communication
-This is a Python-based chat application that allows users to log in, see online users, create chat sessions, invite others, and exchange messages.
-
 # Two-way Communication Chat Application
 The application allows users to log in, see online users, create chat sessions, invite other users to chat sessions, send messages, and end sessions. The server manages user logins and keeps track of online users.
 
