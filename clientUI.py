@@ -87,8 +87,8 @@ class ChatClient:
     def send_message(self):
         message = self.message_entry.get()
         if self.session_id:
-            self.append_message(f"Me: {message}")  # Append the message for the sender immediately
-            broadcast_message(self.session_id, message, self.username)
+            self.append_message(f"Me: {message}")
+            notice_message(self.session_id, message, self.username)
             self.message_entry.delete(0, tk.END)
         else:
             messagebox.showerror("Error", "You are not in a session")
@@ -106,13 +106,12 @@ class ChatClient:
             sessions[self.session_id].append(self.username)
         if target_username not in sessions[self.session_id]:
             sessions[self.session_id].append(target_username)
-        broadcast_invite(self.username, target_username, self.session_id)
-        # Broadcast the updated session information to all participants
-        broadcast_session_update(self.session_id)
+        notice_invite(self.username, target_username, self.session_id)
+        notice_session_update(self.session_id)
 
     def end_session(self):
         if self.session_id:
-            broadcast_end_session(self.session_id, self.username)
+            notice_end_session(self.session_id, self.username)
             self.session_id = None
             self.append_message("Session ended")
         else:
@@ -127,7 +126,6 @@ def handle_incoming_messages(port, client):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('0.0.0.0', port))
     server_socket.listen()
-    #print(f"Listening for incoming messages on port {port}")
 
     while True:
         client_socket, addr = server_socket.accept()
@@ -164,7 +162,7 @@ def handle_incoming_messages(port, client):
                 client.append_message(f"Session updated: {', '.join(updated_session)}")
         client_socket.close()
 
-def broadcast_message(session_id, message, username):
+def notice_message(session_id, message, username):
     if session_id in sessions:
         for participant in sessions[session_id]:
             target_user = next((user for user in online_users if user.startswith(participant)), None)
@@ -181,7 +179,7 @@ def broadcast_message(session_id, message, username):
     else:
         print(f"You are not in session {session_id}")
 
-def broadcast_invite(username, target_username, session_id):
+def notice_invite(username, target_username, session_id):
     if session_id in sessions:
         if target_username not in sessions[session_id]:
             sessions[session_id].append(target_username)
@@ -203,7 +201,7 @@ def broadcast_invite(username, target_username, session_id):
                 except Exception as e:
                     print(f"Failed to send invite to {participant}: {e}")
 
-def broadcast_session_update(session_id):
+def notice_session_update(session_id):
     if session_id in sessions:
         session = sessions[session_id]
         for participant in session:
@@ -223,7 +221,7 @@ def broadcast_session_update(session_id):
                 except Exception as e:
                     print(f"Failed to send session update to {participant}: {e}")
 
-def broadcast_end_session(session_id, username):
+def notice_end_session(session_id, username):
     if session_id in sessions:
         participants = sessions[session_id]
         for participant in participants:
